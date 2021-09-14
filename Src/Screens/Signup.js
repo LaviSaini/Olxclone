@@ -1,21 +1,20 @@
-import { NavigationContainer } from '@react-navigation/native';
 import React, { useState } from 'react';
-import { View, Text,Alert, Image, StyleSheet, ImageBackground,KeyboardAvoidingView,TouchableOpacity} from 'react-native';
+import { View, Text, Image, StyleSheet, Alert, ImageBackground, KeyboardAvoidingView, TouchableOpacity } from 'react-native';
 import auth from '@react-native-firebase/auth';
-import { TextInput,Button } from 'react-native-paper';
-import Signup from './Signup';
+import { TextInput, Button } from 'react-native-paper';
 
-const Login = ({navigation}) => {
+const Signup = ({ navigation }) => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
 
-    const userLogin = async () => {
+
+    const userSignup = async () => {
         if (!email || !password) {
             Alert.alert("Email and Password should not be empty")
             return
         }
         try {
-            const result = await auth().signInWithEmailAndPassword(email, password)
+            const result = await auth().createUserWithEmailAndPassword(email, password)
             console.log(result.user)
         } catch (err) {
             Alert.alert("Something went Wrong")
@@ -23,8 +22,6 @@ const Login = ({navigation}) => {
         await auth().createUserWithEmailAndPassword(email, password)
         console.log(result.user)
     }
-
-
     return (
         <KeyboardAvoidingView behavior="position">
             <ImageBackground
@@ -38,7 +35,7 @@ const Login = ({navigation}) => {
                         source={require('../Assets/logo1.png')}
                     />
                 </View>
-                <Text style={{ fontSize: 20, fontWeight: 'bold', textAlign: 'center', paddingTop: 20 }}>LogIn Yourself</Text>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', textAlign: 'center', paddingTop: 20 }}>Signup Yourself</Text>
             </ImageBackground>
             <View style={styles.box2}>
                 <TextInput
@@ -56,18 +53,18 @@ const Login = ({navigation}) => {
                     onChangeText={text => setPassword(text)}
                 />
                 <Button
-                style={{marginVertical:20,}}
-                mode="contained" onPress={()=>userLogin()}>
-                   <Text style={{color:'white'}}> LogIn </Text>
+                    style={{ marginVertical: 20, }}
+                    mode="contained" onPress={() => userSignup()}>
+                    <Text style={{ color: 'white' }}> SIGN UP </Text>
                 </Button>
                 <TouchableOpacity
-                onPress={()=>navigation.navigate("SignUp")}
+                    onPress={() => navigation.goBack()}
                 >
-                    <Text style={{color:'blue',fontSize:16,fontWeight:'700',textAlign:'center'}}>Don't have a account? Create Account</Text>
+                    <Text style={{ color: 'blue', fontSize: 16, fontWeight: '700', textAlign: 'center' }}>Already have a account? Go to LogIn</Text>
                 </TouchableOpacity>
             </View>
         </KeyboardAvoidingView>
-        
+
     )
 }
 
@@ -79,6 +76,6 @@ const styles = StyleSheet.create({
     }
 })
 
-export default Login;
+export default Signup;
 
 
