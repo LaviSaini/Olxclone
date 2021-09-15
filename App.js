@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, StatusBar } from 'react-native';
 
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer ,DefaultTheme as DefaultThemeNav} from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Feather from 'react-native-vector-icons/Feather';
+import auth from '@react-native-firebase/auth';
 
 import Login from './Src/Screens/Login';
 import Signup from './Src/Screens/Signup';
@@ -19,6 +20,14 @@ const theme = {
     ...DefaultTheme.colors,
     primary: 'deepskyblue',
     //  accent: '#f1c40f',
+  },
+};
+
+const MyTheme = {
+  ...DefaultThemeNav,
+  colors: {
+    ...DefaultThemeNav.colors,
+    backgroundColor: '#FFFFFF',
   },
 };
 const Stack = createStackNavigator()
@@ -36,53 +45,66 @@ const Tabnavigator = () => {
   return (
 
     <Tab.Navigator
-    
-    screenOptions={({ route }) => ({
-      tabBarIcon: ({ color, size }) => {
-        let iconName;
 
-        if (route.name === 'List Item') {
-          
-          iconName = "list"
-          
-        } else if (route.name === 'Create') {
-          iconName = "plus-circle"
-        }else if (route.name === 'Account') {
-          iconName = "user"
-        }
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ color, size }) => {
+          let iconName;
 
-        // You can return any component that you like here!
-        
-        return <Feather name={iconName} size={30} color={color} /> 
-        
-        
-      },
-      tabBarStyle: {
-        backgroundColor: '#0D063D',
-      },
-     
-    })}
-    tabBarOptions={{
-      swipeEnabled: false,
-      tabBarPosition: 'bottom',
-      activeTintColor: '#8888f7',
-      inactiveTintColor: '#f0f0f0',
-      keyboardHidesTabBar: true,
-    }}
-    
+          if (route.name === 'List Item') {
+
+            iconName = "list"
+
+          } else if (route.name === 'Create') {
+            iconName = "plus-circle"
+          } else if (route.name === 'Account') {
+            iconName = "user"
+          }
+
+          // You can return any component that you like here!
+
+          return <Feather name={iconName} size={30} color={color} />
+
+
+        },
+        tabBarStyle: {
+          backgroundColor: '#0D063D',
+        },
+
+      })}
+      tabBarOptions={{
+        swipeEnabled: false,
+        tabBarPosition: 'bottom',
+        activeTintColor: '#8888f7',
+        inactiveTintColor: '#f0f0f0',
+        keyboardHidesTabBar: true,
+      }}
+
     >
-      <Tab.Screen name="List Item" component={LisItemScreen}  options={{ headerShown: false,title:'' }} />
-      <Tab.Screen name="Create" component={CreateAdScreen}  options={{ headerShown: false ,title:''}} />
-      <Tab.Screen name="Account" component={AccountScreen}  options={{ headerShown: false ,title:''}} />
+      <Tab.Screen name="List Item" component={LisItemScreen} options={{ headerShown: false, title: '' }} />
+      <Tab.Screen name="Create" component={CreateAdScreen} options={{ headerShown: false, title: '' }} />
+      <Tab.Screen name="Account" component={AccountScreen} options={{ headerShown: false, title: '' }} />
     </Tab.Navigator>
   )
 }
 
 const Navigation = () => {
-  const user=""
+  const [user, setUser] = useState('')
+  useEffect(() => {
+    const unsubscribe = auth().onAuthStateChanged((userExist) => {
+
+      if (userExist) {
+        setUser(userExist)
+      } else {
+
+        setUser('')
+      }
+    })
+
+    return unsubscribe
+  }, [])
   return (
-    <NavigationContainer>
-      {user?<Tabnavigator/>:<AuthStack/>}
+    <NavigationContainer MyTheme={MyTheme}>
+      {user ? <Tabnavigator /> : <AuthStack />}
     </NavigationContainer>
   )
 }
@@ -96,7 +118,7 @@ const App = () => {
           {/* <Signup/> */}
           {/* <CreateAdScreen/> */}
           {/* <LisItemScreen /> */}
-          <Navigation/>
+          <Navigation />
         </View>
       </PaperProvider>
     </>

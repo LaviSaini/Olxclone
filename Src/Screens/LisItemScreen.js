@@ -1,36 +1,50 @@
-import React, { useState } from 'react';
-import { View, Text, FlatList } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, FlatList,Linking,Platform} from 'react-native';
 import { Avatar, Button, Card, Title, Paragraph } from 'react-native-paper';
+import firestore from '@react-native-firebase/firestore';
+
 
 const LisItemScreen = () => {
-    const myitems = [
-        {
-            name: 'iphone',
-            year: "2013",
-            phone: "9528947520",
-            image: "https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?ixid=MnwxMjA3fDB8MHxzZWFyY2h8M3x8aXBob25lfGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
-            desc: "I am selling this iphone in 7k"
-        },
-        {
-            name: 'camera',
-            year: "2013",
-            phone: "9528947522",
-            image: "https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?ixid=MnwxMjA3fDB8MHxzZWFyY2h8M3x8aXBob25lfGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
-            desc: "I am selling this iphone in 7k"
+    const [item, setItems] = useState([])
+    const getDetails = async () => {
+        const querySnap = await firestore().collection('ads').get()
+        const result = querySnap.docs.map(docSnap => docSnap.data())
+        console.log(result)
+        setItems(result) 
+
+    }
+    const openDial = (phone)=>{
+    if(Platform.OS === "android")
+    {
+        Linking.openURL(`tel:${phone}`)
+
+    }else{
+        Linking.openURL(`telprompt:${phone}`)
+    }
+    }
+    useEffect(() => {
+        getDetails()
+        return () => {
+            console.log("Cleanup")
         }
-    ]
+
+    }, [])
+
     const renderItem = (item) => {
         return (
-            <Card style={{padding:5,elevation:2,margin:10}}>
-                <Card.Title title={item.name}/>
+            <Card style={{ marginVertical:10, elevation: 2 ,borderTopLeftRadius:30,borderTopRightRadius:30}}>
+                 <Card.Cover 
+                 style={{borderTopLeftRadius:30,borderTopRightRadius:30}}
+                 source={{ uri: item.image }} />
+                <Card.Title title={item.name} />
                 <Card.Content>
-                  <Paragraph>{item.desc}</Paragraph>
-                  <Paragraph>{item.year}</Paragraph>
+                    <Paragraph>{item.desc}</Paragraph>
+                    <Paragraph>{item.year}</Paragraph>
                 </Card.Content>
-                <Card.Cover source={{ uri: item.image }} />
+              
                 <Card.Actions>
-                    <Button>200</Button>
-                    <Button>Call Seller</Button>
+                    <Button>{item.price}</Button>
+                    <Button onPress={()=>openDial()}>call seller</Button>
                 </Card.Actions>
             </Card>
         )
@@ -38,9 +52,10 @@ const LisItemScreen = () => {
     return (
         <View >
             <FlatList
-                data={myitems}
+                data={item}
                 keyExtractor={(item) => item.phone}
                 renderItem={({ item }) => renderItem(item)}
+                inverted={true}
             />
         </View>
 

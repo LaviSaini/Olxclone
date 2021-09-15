@@ -19,8 +19,7 @@ const Signup = ({ navigation }) => {
         } catch (err) {
             Alert.alert("Something went Wrong")
         }
-        await auth().createUserWithEmailAndPassword(email, password)
-        console.log(result.user)
+       
     }
     return (
         <KeyboardAvoidingView behavior="position">

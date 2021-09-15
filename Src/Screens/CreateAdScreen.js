@@ -1,6 +1,10 @@
 import React, { useState } from 'react'
-import { View, Text, StyleSheet ,KeyboardAvoidingView} from 'react-native'
+import { View, Text, StyleSheet, KeyboardAvoidingView, Alert } from 'react-native'
 import { TextInput, Button } from 'react-native-paper';
+import firestore from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
+import storage,{ getDownloadURL} from '@react-native-firebase/storage'
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 
 const CreateAdScreen = () => {
     const [name, setName] = useState('')
@@ -8,10 +12,69 @@ const CreateAdScreen = () => {
     const [year, setYear] = useState('')
     const [price, setPrice] = useState('')
     const [phone, setPhone] = useState('')
+    const [image,setImage] = useState('')
+
+    const postData = async () => {
+        if (!name || !desc || !year || !price || !phone) {
+            Alert.alert("Please Fill all Fields")
+            return
+        }
+        try {
+            await firestore().collection('ads')
+                .add({
+                    name,
+                    desc,
+                    year,
+                    price,
+                    phone,
+                    image,
+                    uid: auth().currentUser.uid
+
+                })
+            setName('')
+            setDesc('')
+            setPhone('')
+            setPrice('')
+            setYear('')
+            Alert.alert("Posted Succesfully")
+
+        } catch (err) {
+            Alert.alert("Something went Wrong")
+        }
+    }
+
+    const openCamera = () => {
+        launchCamera({ quality: 1 }, (fileobj) => {
+             console.log(fileobj.assets[0]['uri']);
+             var uploadTask = storage().ref().child(`/item/${Date.now()}`).putFile(fileobj.assets[0]['uri'])
+            uploadTask.on('state_changed',
+                (snapshot) => {
+                   
+                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    if(progress=100){
+                        alert("Image Uploaded")
+                    }
+                    
+                },
+                (error) => {
+                    alert("Something went wrong")
+                },
+                () => {
+                   
+                    uploadTask.snapshot.ref.getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                        setImage(downloadURL)
+                    });
+                }
+            );
+            
+        }
+        );
+    }
+
     return (
         <KeyboardAvoidingView behavior='height' style={styles.container}>
-        
-            <Text style={styles.text}>Creat Ad! </Text>
+
+            <Text style={styles.text}>Create Ad! </Text>
             <TextInput
                 style={{ paddingVertical: 2 }}
                 mode='outlined'
@@ -56,18 +119,20 @@ const CreateAdScreen = () => {
             <Button
                 style={{ marginVertical: 20, }}
                 icon="camera"
-                
-                mode="contained" onPress={() => console.log('Pressed')}>
+
+                mode="contained" onPress={() => openCamera()}>
                 <Text style={{ color: 'white' }}> Upload Image </Text>
             </Button>
             <Button
-                mode="contained" onPress={() => console.log('Pressed')}>
+                mode="contained" 
+                disabled={image?false:true}
+                onPress={() => postData()}>
                 <Text style={{ color: 'white' }}> Create Ad! </Text>
             </Button>
 
-    
+
         </KeyboardAvoidingView>
-        
+
     )
 }
 
