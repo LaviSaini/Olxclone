@@ -13,13 +13,15 @@ import Signup from './Src/Screens/Signup';
 import CreateAdScreen from './Src/Screens/CreateAdScreen';
 import LisItemScreen from './Src/Screens/LisItemScreen';
 import AccountScreen from './Src/Screens/AccountScreen';
+
 const theme = {
   ...DefaultTheme,
   roundness: 5,
   colors: {
     ...DefaultTheme.colors,
-    primary: 'deepskyblue',
-    //  accent: '#f1c40f',
+    primary: '#0960b8',
+    accent: '#f1c40f',
+  
   },
 };
 
@@ -67,7 +69,7 @@ const Tabnavigator = () => {
 
         },
         tabBarStyle: {
-          backgroundColor: '#0D063D',
+          backgroundColor: '#0960b8',
         },
 
       })}
@@ -112,7 +114,7 @@ const App = () => {
   return (
     <>
       <PaperProvider theme={theme}>
-        <StatusBar barStyle="dark-content" backgroundColor="deepskyblue" />
+        <StatusBar barStyle="dark-content" backgroundColor="#0960b8"/>
         <View style={styles.container}>
           {/* <Login /> */}
           {/* <Signup/> */}

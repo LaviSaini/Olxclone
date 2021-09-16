@@ -46,13 +46,14 @@ const CreateAdScreen = () => {
     const openCamera = () => {
         launchCamera({ quality: 1 }, (fileobj) => {
              console.log(fileobj.assets[0]['uri']);
-             var uploadTask = storage().ref().child(`/item/${Date.now()}`).putFile(fileobj.assets[0]['uri'])
+             const uploadTask = storage().ref().child(`/item/${Date.now()}`).putFile(fileobj.assets[0]['uri'])
             uploadTask.on('state_changed',
                 (snapshot) => {
                    
                     const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                    if(progress=100){
+                    if(progress == 100){
                         alert("Image Uploaded")
+                        setImage('')
                     }
                     
                 },
@@ -118,14 +119,14 @@ const CreateAdScreen = () => {
 
             <Button
                 style={{ marginVertical: 20, }}
-                icon="camera"
+               icon="camera"
 
                 mode="contained" onPress={() => openCamera()}>
                 <Text style={{ color: 'white' }}> Upload Image </Text>
             </Button>
             <Button
                 mode="contained" 
-                disabled={image?false:true}
+                disabled={image? false: true}
                 onPress={() => postData()}>
                 <Text style={{ color: 'white' }}> Create Ad! </Text>
             </Button>
