@@ -44,7 +44,7 @@ const CreateAdScreen = () => {
     }
 
     const openCamera = () => {
-        launchCamera({ quality: 1 }, (fileobj) => {
+        launchCamera({ quality: 0.5 }, (fileobj) => {
              console.log(fileobj.assets[0]['uri']);
              const uploadTask = storage().ref().child(`/item/${Date.now()}`).putFile(fileobj.assets[0]['uri'])
             uploadTask.on('state_changed',

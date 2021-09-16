@@ -68,18 +68,24 @@ const Tabnavigator = () => {
 
 
         },
+        tabBarActiveTintColor: '#8888f7',
+        tabBarInactiveTintColor: '#f0f0f0',
+        
         tabBarStyle: {
+          swipeEnabled: false,
+        tabBarPosition: 'bottom',
           backgroundColor: '#0960b8',
+          keyboardHidesTabBar: true,
         },
 
       })}
-      tabBarOptions={{
-        swipeEnabled: false,
-        tabBarPosition: 'bottom',
-        activeTintColor: '#8888f7',
-        inactiveTintColor: '#f0f0f0',
-        keyboardHidesTabBar: true,
-      }}
+      // tabBarOptions={{
+      //   swipeEnabled: false,
+      //   tabBarPosition: 'bottom',
+      //   activeTintColor: '#8888f7',
+      //   inactiveTintColor: '#f0f0f0',
+      //   keyboardHidesTabBar: true,
+      // }}
 
     >
       <Tab.Screen name="List Item" component={LisItemScreen} options={{ headerShown: false, title: '' }} />
